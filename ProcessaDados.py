@@ -11,7 +11,7 @@ from io import StringIO
 # ----------------------------------------------------------------------------
 
 # Nome do arquivo que sera processado
-file_name = "C:\\git\\SO\\data\\middle_dataset.csv"
+file_name = "C:\\Git\\Meus projetos\\CSVDataProcess\\data\\middle_dataset.csv"
 
 # Mensagens de saida
 msg_output = []
@@ -40,7 +40,6 @@ msg_output.append(f"Inicio Processamento - {start_time}")
 # ----------------------------------------------------------------------------
 
 
-
 def sumarize_transacao_pais(dataBlock):
     data = StringIO(dataBlock)
     pdf = pd.read_csv(data, sep=",")
@@ -49,26 +48,37 @@ def sumarize_transacao_pais(dataBlock):
     list_data = pdf_country.to_dict()
     list_out = []
     for k in list_data.keys():
-        list_out.append( {"country": k, "count": list_data[k] } )    
+        list_out.append({"country": k, "count": list_data[k]})
     return list_out
 
 def sumarize_media_preco_produto(dataBlock):
     data = StringIO(dataBlock)
     pdf = pd.read_csv(data, sep=",")
 
-    pdf_product = pdf.groupby('product_description')['price_per_unit'].agg(['sum','count'])
+    pdf_product = pdf.groupby('product_description')['price_per_unit'].agg(['mean', 'count'])
     list_data = pdf_product.to_dict()
     list_out = []
-    for k in list_data["sum"].keys():
-        list_out.append( {"product": k, "sum": list_data["sum"][k], "count": list_data["count"][k] } )    
+    for k in list_data["mean"].keys():
+        list_out.append({"product": k, "mean": list_data["mean"][k], "count": list_data["count"][k]})
     return list_out
 
 # Funcao de processamento de dados
 def thread_processa_blocos(dataBlock, numBlock):
-    msg_output.append(f"Inicio processamento bloco de dados nº {numBlock} - {datetime.datetime.now()}")  
-    threads_parcial_results["transacao_pais"].append(sumarize_transacao_pais(dataBlock))
-    threads_parcial_results["media_preco_produto"].append(sumarize_media_preco_produto(dataBlock))
+    msg_output.append(f"Inicio processamento bloco de dados nº {numBlock} - {datetime.datetime.now()}") 
+    print("==========================================================")
+    transacao_pais_result = sumarize_transacao_pais(dataBlock)
+    media_preco_produto_result = sumarize_media_preco_produto(dataBlock)
+    
+    msg_output.append("Total de Transações por País:")
+    for item in transacao_pais_result:
+        msg_output.append(f"País {item['country']}: {item['count']} transações")
+
+    msg_output.append("\nMédia de Preço por Produto:")
+    for item in media_preco_produto_result:
+        msg_output.append(f"Produto {item['product']}: Média de preço {item['mean']}")
+
     msg_output.append(f"Fim processamento bloco de dados nº {numBlock} - {datetime.datetime.now()}")
+
 
 
 # ----------------------------------------------------------------------------
