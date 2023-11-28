@@ -11,7 +11,7 @@ from io import StringIO
 # ----------------------------------------------------------------------------
 
 # Nome do arquivo que sera processado
-file_name = "C:\\Git\\Meus projetos\\CSVDataProcess\\data\\middle_dataset.csv"
+file_name = ".\\data\\middle_dataset.csv"
 
 # Mensagens de saida
 msg_output = []
