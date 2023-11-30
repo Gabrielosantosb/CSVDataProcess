@@ -15,7 +15,7 @@ file_name = "C:\\git\\SO\\data\\middle_dataset.csv"
 
 # Mensagens de saida
 msg_output = []
-thread_final_result = {}
+
 # Guarda o resultado parcial de cada thread
 threads_parcial_results = {
     "transacao_pais" : [],
@@ -41,21 +41,27 @@ msg_output.append(f"Inicio Processamento - {start_time}")
 # ----------------------------------------------------------------------------
 
 
-def create_column_totalprice(pdf):
-    pdf['total_price'] = pdf['quantity'] * pdf['price_per_unit']
-    return pdf
-    
 
 def sumarize_transacao_pais(dataBlock):
     data = StringIO(dataBlock)
     pdf = pd.read_csv(data, sep=",")
-    pdf_country = pdf.groupby(['country'])['country'].agg(['count'])  
+
+    pdf_country = pdf.groupby(['country'])['country'].agg(['count'])
+    # list_data = pdf_country.to_dict()
+    # list_out = []
+    # for k in list_data.keys():
+    #     list_out.append( {"country": k, "count": list_data[k] } )    
     return pdf_country.to_dict()
 
 def sumarize_media_preco_produto(dataBlock):
     data = StringIO(dataBlock)
     pdf = pd.read_csv(data, sep=",")
-    pdf_product = pdf.groupby('product_description')['price_per_unit'].agg(['sum','count']) 
+
+    pdf_product = pdf.groupby('product_description')['price_per_unit'].agg(['sum','count'])
+    # list_data = pdf_product.to_dict()
+    # list_out = []
+    # for k in list_data["sum"].keys():
+    #     list_out.append( {"product": k, "sum": list_data["sum"][k], "count": list_data["count"][k] } )    
     return pdf_product.to_dict()
 
 
@@ -64,9 +70,14 @@ def sumarize_vendas_por_empresa(dataBlock):
     pdf = pd.read_csv(data, sep=",")
 
     # Criando total price
-    pdf = create_column_totalprice(pdf)
-    pdf_empresa = pdf.groupby("company_id")["total_price"].agg(['sum'])
-    return pdf_empresa.to_dict()
+    pdf['total_price'] = pdf['quantity'] * pdf['price_per_unit']
+
+    pdf_empresa = pdf.groupby("company_id")["total_price"].sum()
+    list_data = pdf_empresa.to_dict()
+    list_out = []
+    for k in list_data.keys():
+        list_out.append({"company_id": k, "total_sales": list_data[k]})
+    return list_out
 
 # Funcao de processamento de dados
 def thread_processa_blocos(dataBlock, numBlock):
@@ -111,31 +122,6 @@ while (threading.active_count() > 1):
     print(f">>> Tem coisa acontecendo - {threading.active_count() - 1} thread em execução\n")
     time.sleep(1)  
 
-# Cálculo resultados finais(juntando os parciais)
-# threads_parcial_results["transacao_pais"][0]["count"]["Algeria"]
-msg_output.append(f"Totalização dos resultados parciais de transações por país - {datetime.datetime.now()}")  
-thread_final_result["transacao_pais"] = {}
-for tp in threads_parcial_results["transacao_pais"]:
-    for count_key in tp["count"].keys():
-        if not count_key in thread_final_result["transacao_pais"].keys():
-            thread_final_result["transacao_pais"][count_key] = {}
-            thread_final_result["transacao_pais"][count_key]["count"] = 0
-        thread_final_result["transacao_pais"][count_key]["count"] += tp["count"][count_key]
-
-msg_output.append(f"Totalização dos resultados parciais de média por produto - {datetime.datetime.now()}")  
-thread_final_result["media_preco_produto"] = {}
-for tp in threads_parcial_results["media_preco_produto"]:
-    # Calculo o total da sum e count para cada produto
-    for count_key in tp["count"].keys():
-        if not count_key in thread_final_result["media_preco_produto"].keys():
-            thread_final_result["media_preco_produto"][count_key] = {}
-            thread_final_result["media_preco_produto"][count_key]["count"] = 0
-            thread_final_result["media_preco_produto"][count_key]["sum"] = 0
-        thread_final_result["media_preco_produto"][count_key]["count"] += tp["count"][count_key]
-        thread_final_result["media_preco_produto"][count_key]["sum"] += tp["sum"][count_key]
-    # Calcula a media para cada produto
-    for count_key in tp["count"].keys():
-        thread_final_result["media_preco_produto"][count_key]["avg"] = thread_final_result["media_preco_produto"][count_key]["sum"]/thread_final_result["media_preco_produto"][count_key]["count"]
 
 msg_output.append(f"Fim do processamento - Nº blocos processados {count} - Tempo total: {datetime.datetime.now() - start_time}")        
 
