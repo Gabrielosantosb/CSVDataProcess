@@ -11,7 +11,7 @@ from io import StringIO
 # ----------------------------------------------------------------------------
 
 # Nome do arquivo que sera processado
-file_name = "C:\\git\\SO\\data\\middle_dataset.csv"
+file_name = "C:\\Git\\Meus projetos\\CSVDataProcess\\data\\middle_dataset.csv"
 
 # Mensagens de saida
 msg_output = []
@@ -77,6 +77,7 @@ def thread_processa_blocos(dataBlock, numBlock):
     msg_output.append(f"Fim processamento bloco de dados nº {numBlock} - {datetime.datetime.now()}")
 
 
+
 # ----------------------------------------------------------------------------
 # Programa principal
 # ----------------------------------------------------------------------------
@@ -140,4 +141,4 @@ for tp in threads_parcial_results["media_preco_produto"]:
 msg_output.append(f"Fim do processamento - Nº blocos processados {count} - Tempo total: {datetime.datetime.now() - start_time}")        
 
 print("\n".join(msg_output))
-print("\n\nAcabou")                
+print("\n\nAcabouu")                
