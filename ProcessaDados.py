@@ -12,7 +12,7 @@ from io import StringIO
 # ----------------------------------------------------------------------------
 
 # Nome do arquivo que sera processado
-file_name = ".\\data\\middle_dataset.csv"
+file_name = ".\\data\\small_dataset.csv"
 
 # Mensagens de saida
 msg_output = []
@@ -30,7 +30,7 @@ threads_parcial_results = {
 }
 
 # Quantidade de bytes de cada leitura
-BUFSIZE = 64 * 1024 * 1024
+BUFSIZE = 16 * 1024 * 1024
 
 # Controla quantidade de threads em exec
 # Quantidade de threads sempre vai ser threads + 1  (O programa principal sempre é contado como uma thread)
@@ -152,7 +152,7 @@ def imprimir_resultados():
         for pagamento, count in list(thread_final_result["quantidade_transacoes_pagamento"].items())[:3]:
             print(f"{pagamento}: {count}")
     else:
-        for pagamento, count in thread_final_result["transacao_por_pagamento"].items():
+        for pagamento, count in thread_final_result["quantidade_transacoes_pagamento"].items():
             print(f"{pagamento}: {count}")
 
     print("================ Distribuição de vendas por mês/ano================")
@@ -176,8 +176,8 @@ def imprimir_resultados():
         for user_id, mean in list(thread_final_result["media_gastos_usuario"].items())[:3]:
             print(f"Usuário {user_id}: {mean['mean']:.2f}")
     else:
-        for user_id, mean in thread_final_result["media_gastos_usuario"].items():
-            print(f"Usuário {user_id}: {mean:.2f}")
+         for user_id, mean in list(thread_final_result["media_gastos_usuario"].items()):
+            print(f"Usuário {user_id}: {mean['mean']:.2f}")
 
     print("================ Total de vendas em cada moeda.================")
     if media_relatorio == 1:
