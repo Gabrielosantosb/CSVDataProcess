@@ -1,5 +1,5 @@
-1 - Ler o arquivo em blocos
-2 - Ler o arquivo e chamar threads
-3 - Colocar a função de processamentos do arquivo em threads
-4- Juntar o resultado das threads
+1 - Ler o arquivo em blocos - FEITO
+2 - Ler o arquivo e chamar threads - FEITO
+3 - Colocar a função de processamentos do arquivo em threads - FEITO
+4- Juntar o resultado das threads - FEITO
 5 - Imprimir o resultado
