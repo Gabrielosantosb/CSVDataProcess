@@ -211,8 +211,15 @@ def thread_processa_blocos(dataBlock, numBlock):
 # ----------------------------------------------------------------------------
 
 
-# Ler o bloco do arquivo        
-media_relatorio = int(input("Deseja ver o relatório resumido em 3 linhas?\n[1]-Sim\n[2]-Não\n"))
+#Validação input
+while True:
+    media_relatorio = int(input("Deseja ver o relatório resumido em 3 linhas?\n[1]-Sim\n[2]-Não\n"))
+    if media_relatorio == 1 or  media_relatorio == 2:
+        break
+    else:
+        print('Insira um valor válido!')
+
+# Ler o bloco do arquivo
 with open(file_name, "r") as infile:
     # Ler o cabecalho do arquivo 
     FILE_HEAD = infile.readline() 
