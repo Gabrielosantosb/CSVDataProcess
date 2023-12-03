@@ -2,7 +2,7 @@ import datetime
 import threading
 import time
 import pandas as pd
-import pprint
+import csv
 from io import StringIO
 
 
@@ -351,6 +351,36 @@ def calcular_total_vendas_moeda_final():
                 thread_final_result["total_vendas_moeda"][currency]["sum"] = 0
             thread_final_result["total_vendas_moeda"][currency]["sum"] += total_price
 
+def salvar_resultados_csv(filename):
+    with open(filename, 'w', newline='') as csvfile:
+        fieldnames = ["Categoria", "Item", "Valor"]
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+        # Escreve o cabeçalho no arquivo CSV
+        writer.writeheader()
+
+        # Função auxiliar para escrever os dados no arquivo
+        def write_data(category, item, value):
+            writer.writerow({"Categoria": category, "Item": item, "Valor": value})
+
+        # Escreve os resultados para cada categoria
+        for category, data in thread_final_result.items():
+            if isinstance(data, dict):
+                for item, values in data.items():
+                    if isinstance(values, dict):
+                        for sub_item, sub_value in values.items():
+                            write_data(category, f"{item} - {sub_item}", sub_value)
+                    else:
+                        write_data(category, item, values)
+            else:
+                write_data(category, "Valor", data)
+                    
+
+        
+
+
+
+
 # Chamando funções finais
 calcular_transacao_pais_final()
 calcular_media_preco_produto_final()
@@ -360,6 +390,8 @@ calcular_distribuicao_vendas_final()
 transacoes_comuns_cidade_final()
 calcular_total_vendas_moeda_final()
 media_gastos_usuario_final()
+csv_filename = "resultados.csv"
+salvar_resultados_csv(csv_filename)
 
 imprimir_resultados()
 msg_output.append(f"Fim do processamento - Nº blocos processados {count} - Tempo total: {datetime.datetime.now() - start_time}")        
