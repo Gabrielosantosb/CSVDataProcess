@@ -350,7 +350,7 @@ def calcular_total_vendas_moeda_final():
                 thread_final_result["total_vendas_moeda"][currency] = {}
                 thread_final_result["total_vendas_moeda"][currency]["sum"] = 0
             thread_final_result["total_vendas_moeda"][currency]["sum"] += total_price
-
+            
 def salvar_resultados_csv(filename):
     with open(filename, 'w', newline='') as csvfile:
         fieldnames = ["Categoria", "Item", "Valor"]
@@ -368,19 +368,18 @@ def salvar_resultados_csv(filename):
             if isinstance(data, dict):
                 for item, values in data.items():
                     if isinstance(values, dict):
+                        write_data(category, item, "")
                         for sub_item, sub_value in values.items():
-                            write_data(category, f"{item} - {sub_item}", sub_value)
+                            if isinstance(sub_value, dict):
+                                for sub_sub_item, sub_sub_value in sub_value.items():
+                                    write_data(category, f"{item} - {sub_item} - {sub_sub_item}", sub_sub_value)
+                            else:
+                                write_data(category, f"{item} - {sub_item}", sub_value)
                     else:
                         write_data(category, item, values)
             else:
                 write_data(category, "Valor", data)
                     
-
-        
-
-
-
-
 # Chamando funções finais
 calcular_transacao_pais_final()
 calcular_media_preco_produto_final()
